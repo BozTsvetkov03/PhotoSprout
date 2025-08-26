@@ -6,11 +6,12 @@ import { getFirestore, doc, getDoc, updateDoc } from 'firebase/firestore';
 import { User } from '../../../models/user.model';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { StorageService } from '../../../services/storage.service';
+import { ImageCropperComponent } from 'ngx-image-cropper';
 
 @Component({
   selector: 'app-edit-profile',
   standalone: true,
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, ImageCropperComponent],
   templateUrl: './edit-profile.component.html',
   styleUrl: './edit-profile.component.css'
 })
@@ -18,8 +19,10 @@ export class EditProfileComponent implements OnInit {
   userForm: FormGroup;
   profileUser: User | null = null;
   isLoading = true;
-  selectedFile: File | null = null;
   previewUrl: string | null = null;
+  imageChangedEvent: any = '';
+  croppedImage: string = '';
+  croppedBlob: Blob | null = null;
 
   constructor(
     private authService: AuthService,
@@ -84,43 +87,69 @@ export class EditProfileComponent implements OnInit {
   }
 
 
-onFileSelected(event: Event) {
-  const input = event.target as HTMLInputElement;
-  if (input.files && input.files.length > 0) {
-    this.selectedFile = input.files[0];
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.previewUrl = reader.result as string;
-    };
-    reader.readAsDataURL(this.selectedFile);
-  }
-}
-
-async onSubmit() {
-  if (this.userForm.invalid) return;
-
-  try {
-    const userId = this.profileUser?.uid;
-    if (!userId) return;
-
-    let profilePictureUrl = this.userForm.value.profilePicture;
-
-    if (this.selectedFile) {
-      profilePictureUrl = await this.storageService.uploadProfilePicture(this.selectedFile, userId);
+  onFileSelected(event: Event): void {
+    console.log('File selected!');
+    const input = event.target as HTMLInputElement;
+    const file = input?.files?.[0];
+    console.log('Selected file:', file?.name, file?.type);
+  
+    if (file && file.type.startsWith('image/')) {
+      this.imageChangedEvent = event;
+    } else {
+      console.warn('Invalid file type');
     }
-
-    const updatedUser = {
-      username: this.userForm.value.username,
-      profilePicture: profilePictureUrl,
-    };
-
-    const db = getFirestore(this.firebaseApp);
-    await updateDoc(doc(db, 'users', userId), updatedUser);
-    this.router.navigate([`/users/${userId}`]);
-
-  } catch (error) {
-    console.error('Error updating profile:', error);
   }
-}
+  
+
+  private dataURItoBlob(dataURI: string): Blob {
+    const byteString = atob(dataURI.split(',')[1]);
+    const arrayBuffer = new ArrayBuffer(byteString.length);
+    const intArray = new Uint8Array(arrayBuffer);
+    for (let i = 0; i < byteString.length; i++) {
+      intArray[i] = byteString.charCodeAt(i);
+    }
+    return new Blob([intArray], { type: 'image/png' });
+  }
+
+  imageCropped(event: any): void {
+    if (event.blob) {
+      this.croppedBlob = event.blob;
+      this.croppedImage = URL.createObjectURL(event.blob);
+      console.log('Blob set. Size:', event.blob.size);
+    }
+  }
+
+  async onSubmit() {
+    if (this.userForm.invalid) return;
+  
+    try {
+      const userId = this.profileUser?.uid;
+      if (!userId) return;
+  
+      let profilePictureUrl = this.userForm.value.profilePicture;
+  
+      if (this.croppedBlob) {
+        await this.storageService.deleteAllProfilePictures(userId);
+
+        console.log('Uploading blob...');
+        profilePictureUrl = await this.storageService.uploadCroppedProfilePicture(this.croppedBlob, userId);
+        console.log('Uploaded image URL:', profilePictureUrl);
+      }
+  
+      const updatedUser = {
+        username: this.userForm.value.username,
+        profilePicture: profilePictureUrl,
+      };
+  
+      const db = getFirestore(this.firebaseApp);
+      await updateDoc(doc(db, 'users', userId), updatedUser);
+      console.log('Profile updated!');
+      this.router.navigate([`/users/${userId}`]);
+  
+    } catch (error) {
+      console.error('Error updating profile:', error);
+    }
+  }
+  
+  
 }

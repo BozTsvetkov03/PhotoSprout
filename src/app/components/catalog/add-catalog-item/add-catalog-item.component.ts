@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { StorageService } from '../../../services/storage.service';
-import { catalogService } from '../../../services/catalog.service';
+import { CatalogService } from '../../../services/catalog.service';
 import { getAuth } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 
@@ -23,7 +23,7 @@ export class AddCatalogItemComponent {
     private fb: FormBuilder,
     private router: Router,
     private storageService: StorageService,
-    private catalogService: catalogService
+    private catalogService: CatalogService
   ) {
     this.userForm = this.fb.group({
       imgName: ['', [Validators.required]],
@@ -70,13 +70,13 @@ async onSubmit() {
     const userData = userSnap.data();
     const username = userData['username'] || 'anonymous';
 
-    const filePath = `user_uploads/${userId}/catalog_items/${Date.now()}_${this.selectedFile.name}`;
-    const imageUrl = await this.storageService.uploadFile(this.selectedFile, filePath);
+    const { url, fileName } = await this.storageService.uploadFile(this.selectedFile, userId);
 
     await this.catalogService.addCatalogItem({
       imgName: this.userForm.value.imgName,
       description: this.userForm.value.description,
-      source: imageUrl,
+      source: url,
+      fileName: fileName,
       authorId: userId,
       authorUsername: username
     });

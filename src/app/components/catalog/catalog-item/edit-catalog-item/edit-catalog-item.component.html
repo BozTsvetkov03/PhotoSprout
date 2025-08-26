@@ -1,0 +1,59 @@
+@if (!item) {
+    <div class="loading">
+      <p>Loading...</p>
+    </div>
+  }
+  
+  @else {
+    <div class="edit-item-container">
+        
+      <form [formGroup]="editForm" (ngSubmit)="onSubmit()">
+        <!-- Title -->
+        <label for="title">Title</label>
+        <input
+          id="title"
+          type="text"
+          formControlName="title"
+          placeholder="Enter a title"
+        />
+  
+        <!-- Description -->
+        <label for="description">Description</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          placeholder="Enter a description"
+        ></textarea>
+  
+        <!-- Image Preview -->
+        <div class="image-section">
+          <p>Current Image:</p>
+          <img
+            [src]="item.image"
+            [alt]="item.title"
+            class="image-preview"
+          />
+  
+          <input
+            id="imageUpload"
+            type="file"
+            (change)="onFileSelected($event)"
+          />
+  
+          @if (previewUrl) {
+            <div class="preview-block">
+              <p>New Image Preview:</p>
+              <img [src]="previewUrl" alt="Preview" class="image-preview" />
+            </div>
+          }
+        </div>
+  
+        <!-- Buttons -->
+        <div class="button-row">
+          <button type="submit" [disabled]="editForm.invalid">Save Changes</button>
+          <button type="button" (click)="onCancel()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  }
+  

@@ -1,28 +1,42 @@
 @if (isLoading) {
-    <div class="spinner-container">
-      <div class="spinner"></div>
-      <p>Loading...</p>
-    </div>
-  }
-  
-  @if (!isLoading && profileUser) {
-    <div class="edit-profile-container">
-      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
-        <label for="username">Username</label>
-        <input id="username" formControlName="username" type="text" />
-  
-        <label for="profilePicture">Profile Picture</label>
-        <input id="profilePicture" type="file" (change)="onFileSelected($event)" />
-  
-        @if (previewUrl) {
-          <div class="image-preview">
-            <p>Preview:</p>
-            <img [src]="previewUrl" alt="Profile Preview" width="150" />
+  <div class="spinner-container">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+}
+
+@if (!isLoading && profileUser) {
+  <div class="edit-profile-container">
+    <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+      <label for="username">Username</label>
+      <input id="username" formControlName="username" type="text" />
+
+      <label for="profilePicture">Profile Picture</label>
+      <input id="profilePicture" type="file" (change)="onFileSelected($event)" />
+
+      @if (imageChangedEvent) {
+        <div class="image-section">
+          <div class="cropper-wrapper">
+            <image-cropper
+              [imageChangedEvent]="imageChangedEvent"
+              [maintainAspectRatio]="true"
+              [aspectRatio]="1"
+              [resizeToWidth]="0"
+              [roundCropper]="true"
+              format="jpeg"
+              (imageCropped)="imageCropped($event)"
+            ></image-cropper>
           </div>
-        }
-  
-        <button type="submit" [disabled]="userForm.invalid">Save Changes</button>
-      </form>
-    </div>
-  }
-  
+      
+          @if (croppedImage !== '') {
+            <div class="image-preview">
+              <p>Preview:</p>
+            </div>
+          }
+        </div>
+      }      
+
+      <button type="submit" [disabled]="userForm.invalid">Save Changes</button>
+    </form>
+  </div>
+}

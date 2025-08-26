@@ -11,6 +11,7 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 import { EditProfileComponent } from './components/user-profile/edit-profile/edit-profile.component';
 import { AuthGuard } from './guards/auth.guard';
 import { AddCatalogItemComponent } from './components/catalog/add-catalog-item/add-catalog-item.component';
+import { EditCatalogItemComponent } from './components/catalog/catalog-item/edit-catalog-item/edit-catalog-item.component';
 
 export const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -20,9 +21,9 @@ export const routes: Routes = [
     { path: 'privacy', component: PrivacyPolicyComponent},
     { path: 'catalog/add', canActivate: [AuthGuard] ,component: AddCatalogItemComponent },
     { path: 'catalog/:id', component: CatalogItemDetailsComponent },
+    { path: 'catalog/:id/edit', component: EditCatalogItemComponent },
     { path: 'register', component: RegisterComponent },
     { path: 'login', component: LoginComponent},
     { path: 'users/:id', component: UserProfileComponent},
     { path: 'users/:id/edit', canActivate: [AuthGuard], component: EditProfileComponent },
-
 ];

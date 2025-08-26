@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { catalogService } from '../../services/catalog.service';
+import { CatalogService } from '../../services/catalog.service';
 import { CatalogItemComponent } from './catalog-item/catalog-item.component';
 import { CommonModule } from '@angular/common';
 import { CatalogItem } from '../../types';
@@ -10,14 +10,14 @@ import { AuthService } from '../../services/auth.service';
   selector: 'app-catalog',
   standalone: true,
   imports: [CatalogItemComponent, CommonModule, RouterModule],
-  providers: [catalogService],
+  providers: [CatalogService],
   templateUrl: './catalog.component.html',
   styleUrls: ['./catalog.component.css']
 })
 export class CatalogComponent implements OnInit {
   items: CatalogItem[] = [];
 
-  constructor(private catalogService: catalogService, private authService: AuthService) {}
+  constructor(private catalogService: CatalogService, private authService: AuthService) {}
 
   ngOnInit() {
     this.loadItems();
