@@ -11,14 +11,101 @@
 }
 
 @else if (item) {
+
   <div class="details-container">
+
     <h1>{{ item.title }}</h1>
+
     <img [src]="item.image" [alt]="item.title" class="details-image" />
+
     <p><strong>Author:</strong> {{ item.author.username }}</p>
+
     <p><strong>Description:</strong> {{ item.description }}</p>
 
+    <div class="post-actions">
+
+      <div class="like-wrapper" (click)="onToggleLike()">
+        <span id="like-count">{{ item.likeCount }}</span>
+        <img 
+          [src]="hasLiked ? 'heart (1).svg' : 'heart.svg'"
+          alt="like-button"
+          id="like-button"
+        >
+      </div>
+
+    </div>
+
+    <div class="comments-container">
+
+      <h2 class="comments-title">Comments</h2>
+
+      @if (currentUser) {
+        <div class="comment-input-box">
+
+          <img 
+            class="comment-avatar"
+            [src]="currentUser.profilePicture || 'default-user.svg'"
+            alt="avatar"
+          >
+
+          <textarea
+            [(ngModel)]="newCommentBody"
+            placeholder="Write a comment..."
+            class="comment-textarea"
+          ></textarea>
+
+          <button 
+            class="comment-submit"
+            (click)="submitComment()"
+            [disabled]="!newCommentBody || !newCommentBody.trim()"
+          >
+            Post
+          </button>
+
+        </div>
+      }
+      @else {
+        <p class="login-to-comment">Log in to comment.</p>
+      }
+
+      <div class="comments-list">
+
+        @for (comment of comments; track comment.id) {
+
+          <div class="comment-item">
+
+            <img
+              class="comment-avatar"
+              [src]="comment.authorAvatar || 'default-user.svg'"
+              alt="avatar"
+            >
+
+            <div class="comment-body">
+
+              <p class="comment-author">{{ comment.authorUsername }}</p>
+
+              <p class="comment-text">{{ comment.body }}</p>
+
+              <p class="comment-date">
+                {{ comment.createdAt.toDate() | date:'medium' }}
+              </p>
+
+            </div>
+
+          </div>
+
+        }
+
+      </div>
+
+    </div>
+
     @if (isOwnItem) {
-      <a [routerLink]="['/catalog', item.id, 'edit']" class="edit-button">Edit</a>
+      <a [routerLink]="['/catalog', item.id, 'edit']" class="edit-button">
+        Edit
+      </a>
     }
+
   </div>
+
 }

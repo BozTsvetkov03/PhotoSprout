@@ -34,11 +34,12 @@ export class CatalogService {
           title: data['imgName'],
           description: data['description'],
           image: data['source'],
-          fileName: data['fileName'],   // ✅ include stored file name
+          fileName: data['fileName'],
           author: {
             id: data['authorId'],
             username: data['authorUsername']
-          }
+          },
+          likeCount: data['likeCount'],
         };
       });
 
@@ -62,11 +63,13 @@ export class CatalogService {
           title: data['imgName'],
           description: data['description'],
           image: data['source'],
-          fileName: data['fileName'],  // ✅ added
+          fileName: data['fileName'],
           author: {
             id: data['authorId'],
             username: data['authorUsername']
-          }
+          },
+          likeCount: data['likeCount']
+
         };
       } else {
         console.log(`Couldn't find document!`);
@@ -82,18 +85,20 @@ export class CatalogService {
     imgName: string;
     description: string;
     source: string;
-    fileName: string;   // ✅ require fileName
+    fileName: string;
     authorId: string;
     authorUsername: string;
+    likeCount?: number;
   }): Promise<void> {
     try {
       await addDoc(this.catalogCollection, {
         imgName: data.imgName,
         description: data.description,
         source: data.source,
-        fileName: data.fileName,   // ✅ store real storage filename
+        fileName: data.fileName,
         authorId: data.authorId,
-        authorUsername: data.authorUsername
+        authorUsername: data.authorUsername,
+        likeCount: 0,
       });
     } catch (error) {
       console.error('Error adding catalog item:', error);
@@ -103,7 +108,7 @@ export class CatalogService {
 
   async updateCatalogItem(
     id: string,
-    data: { title: string; description: string; image: string; fileName?: string } // <-- optional
+    data: { title: string; description: string; image: string; fileName?: string } 
   ): Promise<void> {
     try {
       const itemDocRef = doc(this.db, 'catalogItems', id);

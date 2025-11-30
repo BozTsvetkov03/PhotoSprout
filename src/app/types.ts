@@ -7,5 +7,15 @@ export interface CatalogItem {
   author: {
     id: string;
     username: string;
-  };
+  },
+  likeCount?: number
+}
+
+export interface UserComment {
+  id: string;
+  authorId: string;
+  authorUsername: string;
+  authorAvatar?: string;
+  body: string;
+  createdAt: any;
 }
