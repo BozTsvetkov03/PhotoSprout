@@ -21,7 +21,7 @@ It's a course project @SoftUni.
 
 ---
 
-## 🔧 Features
+##  Features
 
 - Browse a catalog of photos / posts  
 - Detailed view for each photo: title, image, description, author  
@@ -33,7 +33,7 @@ It's a course project @SoftUni.
 
 ---
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 | Part                | Technology / Library |
 |---------------------|----------------------|
@@ -45,7 +45,7 @@ It's a course project @SoftUni.
 
 ---
 
-## 🚀 Getting Started
+##  Getting Started
 
 ### Prerequisites
 
