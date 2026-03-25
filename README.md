@@ -1,8 +1,7 @@
 # PhotoSprout 📸  
-**Angular + Firebase social/photo-sharing app (SoftUni course project)**
+**Angular + Firebase social/photo-sharing app**
 
 PhotoSprout is a simple photo-sharing application built with Angular where users can browse a catalog of photos, comment, like and customize their own profiles.
-It's a course project @SoftUni.
 
 ---
 
